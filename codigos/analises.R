@@ -3,6 +3,7 @@ vendas <- read_csv("bancos/vendas.csv")
 View(vendas)
 devolução <- read_csv("bancos/devolução.csv")
 View(devolução)
+library(tidyverse)
 
 # descobrindo quais os valores dentro de uma variavel
 
@@ -54,14 +55,21 @@ vendas$Size[vendas$Size == "S"] <- "P"
 vendas$Size[vendas$Size == "XL"] <- "GG"
 vendas$Size <- as.factor(vendas$Size)
 
+# Faturamento anual por categoria
+
+### Moda infantil
+vendas2 <- vendas %>% 
+  select(Category, Price) %>% 
+  filter(Category == "Moda Infantil")
+  mean(vendas2$Price, na.rm = T)
+  sd(vendas2$Price, na.rm = T)
+##### intervalo de confiança
+media <- 50.34635
+desvio <- 16.69719
+tamanho <- 386
+t.test(x = media ,sd = desvio ,n = tamanho, alternative = "two.sided", conf.level = 0,95) 
 
 
 
 
-
-
-vendas$Education <- factor(vendas$Education, levels = c("Sem faculdade", 
-                                                      "Faculdade",
-                                                      "Bacharelado",
-                                                      "Mestre",
-                                                      "Doutor"))
+ggplot(vendas, aes(Price, Rating)) + geom_point()
