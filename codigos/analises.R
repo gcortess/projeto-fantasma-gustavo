@@ -58,18 +58,59 @@ vendas$Size <- as.factor(vendas$Size)
 # Faturamento anual por categoria
 
 ### Moda infantil
-vendas2 <- vendas %>% 
-  select(Category, Price) %>% 
-  filter(Category == "Moda Infantil")
-  mean(vendas2$Price, na.rm = T)
-  sd(vendas2$Price, na.rm = T)
-##### intervalo de confiança
-media <- 50.34635
-desvio <- 16.69719
-tamanho <- 386
-t.test(x = media ,sd = desvio ,n = tamanho, alternative = "two.sided", conf.level = 0,95) 
+vendasi <- vendas %>% 
+  filter(Category == "Moda Infantil") 
+sum(vendasi$Price, na.rm = T)
+ 
+### Moda Masculina 
+vendasm <- vendas %>% 
+  filter(Category == "Moda Masculina") 
+sum(vendasm$Price, na.rm = T)
+
+### Moda Feminina
+
+vendasF <- vendas %>% 
+  filter(Category == "Moda Feminina") 
+sum(vendasF$Price, na.rm = T)
 
 
 
+# VARIAÇÃO DE PREÇO POR MARCA
 
-ggplot(vendas, aes(Price, Rating)) + geom_point()
+vendas$Brand <- as.factor(vendas$Brand)
+vendaspm <- vendas %>% 
+  filter(Brand == "Adidas" | Brand == "Gucci" | Brand == "H&M" | Brand == "Nike" | Brand == "Zara")
+#### GRAFICO DE BOXPLOT PREÇO/MARCA
+ggplot(vendaspm, aes(x=Price, y=Brand)) +
+  geom_boxplot(fill=c("#A11D21"), width = 0.5) +
+  guides(fill=FALSE) +
+  stat_summary(fun.y="mean", geom="point", shape=22, size=3, fill="white")+
+  labs(x="PREÇO", y="MARCA")+
+  theme_bw() +
+  theme(axis.title.y=element_text(colour="black", size=12),
+        axis.title.x = element_text(colour="black", size=12),
+        axis.text = element_text(colour = "black", size=9.5),
+        panel.border = element_blank(),
+        axis.line.y = element_line(colour = "black")) 
+
+# RELAÇÃO ENTRE CATEGORIA E MARCA
+vendascm <- vendas %>% 
+  filter(Category == "Moda Masculina" | Category == "Moda Feminina") %>% 
+  filter(Brand != " ") %>%  
+  group_by(Category, Brand) %>%
+  summarise(freq = n()) %>%
+  mutate(freq_relativa = round((freq/sum(freq))*100, 2))
+
+names(vendascm)[names(vendascm) == "Category"] <- "Categoria"
+
+ggplot(vendascm) +
+  aes(x = Brand, y = freq,
+      fill = Categoria) +
+  geom_col(position = position_dodge2(preserve = "single", padding = 0)) +
+  labs(x = "MARCA", y = "FREQUÊNCIA ABSOLUTA")+
+  scale_fill_manual(values = c("#A11D21","#003366")) +
+  coord_flip() +
+  theme_bw()
+
+
+ggplot( aes(Price, Rating)) + geom_box()
