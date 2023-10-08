@@ -103,11 +103,25 @@ vendascm <- vendas %>%
 
 names(vendascm)[names(vendascm) == "Category"] <- "Categoria"
 
+#### GRAFICO DE COLUNAS CATEGORIA/MARCA
+
+meanTLE <- c(76, 73, 63, 74, 66, 71, 60, 62, 74, 76)
+
 ggplot(vendascm) +
   aes(x = Brand, y = freq,
       fill = Categoria) +
   geom_col(position = position_dodge2(preserve = "single", padding = 0)) +
   labs(x = "MARCA", y = "FREQUÊNCIA ABSOLUTA")+
+  geom_text(
+    aes(label = meanTLE),
+    vjust = 0,
+    colour = "black", 
+    position = position_dodge(width=0.9),
+    fontface = "bold",
+    size=3,
+    angle = 0,
+    hjust = -0.2) + 
+  ylim(0, 80) +
   scale_fill_manual(values = c("#A11D21","#003366")) +
   coord_flip() +
   theme_bw()
