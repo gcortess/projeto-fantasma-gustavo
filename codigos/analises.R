@@ -101,9 +101,9 @@ vendascm <- vendas %>%
   summarise(freq = n()) %>%
   mutate(freq_relativa = round((freq/sum(freq))*100, 2))
 
-names(vendascm)[names(vendascm) == "Category"] <- "Categoria"
-
 #### GRAFICO DE COLUNAS CATEGORIA/MARCA
+
+names(vendascm)[names(vendascm) == "Category"] <- "Categoria"
 
 meanTLE <- c(76, 73, 63, 74, 66, 71, 60, 62, 74, 76)
 
@@ -129,12 +129,48 @@ ggplot(vendascm) +
 
 # RELAÇÃO ENTRE PREÇO E AVALIAÇÃO
 
-ggplot(vendas, aes(x=Price, y=Rating)) + geom_point(colour="#A11D21", size=2) +
-  abline(lm(Price~Rating),col='black') +
-  labs(x="PREÇO", y="AVALIAÇÃO") +
+modelo_regressao <- lm(Rating ~ Price, data = vendas)
+ggplot(vendas, aes(x = Price, y = Rating)) +
+  geom_point(colour = "#A11D21", size = 2) +
+  geom_abline(intercept = coef(modelo_regressao)[1], slope = coef(modelo_regressao)[2], color = "Black") +
+  labs(x = "PREÇO", y = "AVALIAÇÃO") +
   theme_bw() +
-  theme(axis.title.y=element_text(colour="black", size=12),
-        axis.title.x = element_text(colour="black", size=12),
-        axis.text = element_text(colour = "black", size=9.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "black"))
+  theme(
+    axis.title.y = element_text(colour = "black", size = 12),
+    axis.title.x = element_text(colour = "black", size = 12),
+    axis.text = element_text(colour = "black", size = 9.5),
+    panel.border = element_blank(),
+    axis.line = element_line(colour = "black")
+  )
+
+chisq.test(vendas, )
+
+# FREQUÊNCIA DE CADA TIPO DE DEVOLUÇÃO POR MARCA
+
+vendasmd <- vendas %>% 
+  filter(Brand != " ") %>% 
+  filter(`Motivo devolução` != " ") %>%  
+  group_by(`Motivo devolução`, Brand) %>%
+  summarise(freq = n()) %>%
+  mutate(freq_relativa = round((freq/sum(freq))*100, 2))
+
+meanTMD <- c(20, 24,19,39,34, 28,26,22,28,20,30,20,27,29,20)
+
+ggplot(vendasmd) +
+  aes(x = Brand, y = freq,
+      fill = `Motivo devolução`) +
+  geom_col(position = position_dodge2(preserve = "single", padding = 0)) +
+  labs(x = "MARCA", y = "FREQUÊNCIA ABSOLUTA")+
+  geom_text(
+    aes(label = meanTMD),
+    vjust = 0,
+    colour = "black", 
+    position = position_dodge(width=1),
+    fontface = "bold",
+    size=3,
+    angle = 0,
+    hjust = -0.2) + 
+  ylim(0, 40) +
+  scale_fill_manual(values = c("#A11D21","#003366", "#CC9900")) +
+  coord_flip() +
+  theme_bw()
