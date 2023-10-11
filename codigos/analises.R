@@ -127,4 +127,14 @@ ggplot(vendascm) +
   theme_bw()
 
 
-ggplot( aes(Price, Rating)) + geom_box()
+# RELAÇÃO ENTRE PREÇO E AVALIAÇÃO
+
+ggplot(vendas, aes(x=Price, y=Rating)) + geom_point(colour="#A11D21", size=2) +
+  abline(lm(Price~Rating),col='black') +
+  labs(x="PREÇO", y="AVALIAÇÃO") +
+  theme_bw() +
+  theme(axis.title.y=element_text(colour="black", size=12),
+        axis.title.x = element_text(colour="black", size=12),
+        axis.text = element_text(colour = "black", size=9.5),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "black"))
