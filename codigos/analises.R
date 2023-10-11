@@ -5,7 +5,7 @@ devolução <- read_csv("bancos/devolução.csv")
 View(devolução)
 library(tidyverse)
 
-# descobrindo quais os valores dentro de uma variavel
+# descobrindo quais os valores das variaveis
 
 ### product name
 vendas$`Product Name` <- as.factor(vendas$`Product Name`)
@@ -57,23 +57,34 @@ vendas$Size <- as.factor(vendas$Size)
 
 # Faturamento anual por categoria
 
-### Moda infantil
-vendasi <- vendas %>% 
-  filter(Category == "Moda Infantil") 
-sum(vendasi$Price, na.rm = T)
- 
-### Moda Masculina 
-vendasm <- vendas %>% 
-  filter(Category == "Moda Masculina") 
-sum(vendasm$Price, na.rm = T)
+vendaspc <- vendas %>% 
+  filter(Price != " ") %>% 
+  filter(Category != " ") %>%  
+  group_by(Category) %>%
+  summarise(faturamento = sum(Price))
 
-### Moda Feminina
+#### GRAFICO DO FATURAMENTO ANUAL POR CATEGORIA
 
-vendasF <- vendas %>% 
-  filter(Category == "Moda Feminina") 
-sum(vendasF$Price, na.rm = T)
+vendaspc <- factor(vendaspc$Category, levels = c("Moda Feminina", "Moda Masculina", "Moda Infantil"))
 
+meanpc <- c(18219, 19333, 17261)
 
+ggplot(vendaspc) +
+  aes(x = Category, y = faturamento) +
+  geom_col(position = position_dodge2(preserve = "single", padding = 0), fill = "#A11D21") +
+  labs(x = "CATEGORIA", y = "FATURAMENTO ANO 2022")+
+  geom_text(
+    aes(label = meanpc),
+    vjust = 0,
+    colour = "black", 
+    position = position_dodge(width=0.9),
+    fontface = "bold",
+    size=3,
+    angle = 0,
+    hjust = -0.2) + 
+  ylim(0, 25000) +
+  coord_flip() +
+  theme_bw()
 
 # VARIAÇÃO DE PREÇO POR MARCA
 
@@ -143,7 +154,7 @@ ggplot(vendas, aes(x = Price, y = Rating)) +
     axis.line = element_line(colour = "black")
   )
 
-chisq.test(vendas, )
+cor.test(vendas$Price, vendas$Rating, method = "pearson")
 
 # FREQUÊNCIA DE CADA TIPO DE DEVOLUÇÃO POR MARCA
 
