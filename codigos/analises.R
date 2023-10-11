@@ -65,25 +65,24 @@ vendaspc <- vendas %>%
 
 #### GRAFICO DO FATURAMENTO ANUAL POR CATEGORIA
 
-vendaspc <- factor(vendaspc$Category, levels = c("Moda Feminina", "Moda Masculina", "Moda Infantil"))
+vendaspc_ordenado <- factor(vendaspc$Category, levels = c("Moda Masculina", "Moda Feminina", "Moda Infantil"))
 
 meanpc <- c(18219, 19333, 17261)
 
 ggplot(vendaspc) +
-  aes(x = Category, y = faturamento) +
+  aes(x = vendaspc_ordenado, y = faturamento) +
   geom_col(position = position_dodge2(preserve = "single", padding = 0), fill = "#A11D21") +
   labs(x = "CATEGORIA", y = "FATURAMENTO ANO 2022")+
   geom_text(
     aes(label = meanpc),
-    vjust = 0,
+    vjust = -0.5,
     colour = "black", 
     position = position_dodge(width=0.9),
     fontface = "bold",
     size=3,
     angle = 0,
-    hjust = -0.2) + 
+    hjust = 0.5) + 
   ylim(0, 25000) +
-  coord_flip() +
   theme_bw()
 
 # VARIAÇÃO DE PREÇO POR MARCA
@@ -96,6 +95,7 @@ ggplot(vendaspm, aes(x=Price, y=Brand)) +
   geom_boxplot(fill=c("#A11D21"), width = 0.5) +
   guides(fill=FALSE) +
   stat_summary(fun.y="mean", geom="point", shape=22, size=3, fill="white")+
+  coord_flip() +
   labs(x="PREÇO", y="MARCA")+
   theme_bw() +
   theme(axis.title.y=element_text(colour="black", size=12),
@@ -104,6 +104,7 @@ ggplot(vendaspm, aes(x=Price, y=Brand)) +
         panel.border = element_blank(),
         axis.line.y = element_line(colour = "black")) 
 
+chisq.test(vendas$Brand, vendas$Price)
 # RELAÇÃO ENTRE CATEGORIA E MARCA
 vendascm <- vendas %>% 
   filter(Category == "Moda Masculina" | Category == "Moda Feminina") %>% 
@@ -174,14 +175,13 @@ ggplot(vendasmd) +
   labs(x = "MARCA", y = "FREQUÊNCIA ABSOLUTA")+
   geom_text(
     aes(label = meanTMD),
-    vjust = 0,
+    vjust = -0.5,
     colour = "black", 
     position = position_dodge(width=1),
     fontface = "bold",
     size=3,
     angle = 0,
-    hjust = -0.2) + 
+    hjust = 0.5) + 
   ylim(0, 40) +
   scale_fill_manual(values = c("#A11D21","#003366", "#CC9900")) +
-  coord_flip() +
   theme_bw()
